@@ -15,7 +15,6 @@ end
 
 # class to handle dictionary
 class DictionaryHandler < FileHandler
-  # attr_reader :guess_word
   attr_accessor :guess_word
   def initialize(filename)
     super(filename)
@@ -47,7 +46,6 @@ class SaveFileHandler < FileHandler
     system('cls') || system('clear')
     print 'Name for save file? '
     filename = gets.chomp.downcase + '.yml'
-    # test = YAML.dump(game.to_h)
     File.open(SAVEPATH + filename, 'w') { |file| file.write(game.to_yaml) }
     puts 'Game saved.. Press Enter'
     gets

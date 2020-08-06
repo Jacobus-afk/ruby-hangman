@@ -14,13 +14,6 @@ class Game
     else
       load_defaults
     end
-    # @dict_word = @dictionary.guess_word
-    # @turns_left = 8
-    # @used_letters = []
-    # @correct_guessed_chars = []
-    # @guessed_correctly = false
-    # @unlocked_word = generate_word_dashes
-    # @guess = ''
   end
 
   def play_round
@@ -28,7 +21,7 @@ class Game
     puts "Your word: #{@unlocked_word} \t\t"\
         "Turns left: #{@turns_left} \t"\
         "Used letters: #{@used_letters.join(',')}\t\t"\
-        "Press \` to save game, ESC to exit \n\n"
+        "Press \` to save game, ESC to exit"
     acquire_guess
     handle_guess
   end
@@ -45,10 +38,13 @@ class Game
     @guess = ''
   end
 
-  def load_saved_game
-    # @dictionary = DictionaryHandler.new('5desk.txt')
+  def replace_dict_word
     @dictionary.guess_word = @saver.saved_game.dict_word
     @dict_word = @saver.saved_game.dict_word
+  end
+
+  def load_saved_game
+    replace_dict_word
     @turns_left = @saver.saved_game.turns_left
     @used_letters = @saver.saved_game.used_letters
     @correct_guessed_chars = @saver.saved_game.correct_guessed_chars
@@ -58,6 +54,7 @@ class Game
   end
 
   def handle_input
+    # https://stackoverflow.com/questions/946738/detect-key-press-non-blocking-w-o-getc-gets-in-ruby/22659929
     system('stty raw -echo') #=> Raw mode, no echo
     @guess = STDIN.getc
     system('stty -raw echo') #=> Reset terminal mode
@@ -65,22 +62,19 @@ class Game
 
     return @turns_left = 0 if @guess.ord == 27
 
-    true if (@guess =~ /[a-z]/) && !@used_letters.include?(@guess)
+    return if (@guess =~ /[a-z]/) && !@used_letters.include?(@guess)
+
+    print "\nNot an available letter. Retry: "
+    handle_input
   end
 
   def acquire_guess
-    loop do
-      print 'Your guess? '
-      # https://stackoverflow.com/questions/946738/detect-key-press-non-blocking-w-o-getc-gets-in-ruby/22659929
-      break if handle_input == true
+    # loop do
+    print "\nYour guess? "
+    handle_input
 
-      # @guess = gets.chomp.downcase
-      # next unless @guess =~ /[a-z]/
-
-      # next if @used_letters.include? @guess
-
-      return
-    end
+    # return
+    # end
   end
 
   def handle_guess
