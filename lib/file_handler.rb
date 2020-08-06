@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require 'English'
+SAVEPATH = 'saves/'
 
+require 'English'
+require 'yaml'
 # class to handle file ops
 class FileHandler
   def initialize(filename)
@@ -32,4 +34,18 @@ end
 
 # class to handle save files
 class SaveFileHandler < FileHandler
+  def initialize
+    puts
+  end
+
+  def save_game(game)
+    Dir.mkdir(SAVEPATH) unless Dir.exist? SAVEPATH
+    system('cls') || system('clear')
+    print 'Name for savefile? '
+    filename = gets.chomp + '.yml'
+    # test = YAML.dump(game.to_h)
+    File.open(SAVEPATH + filename, 'w') { |file| file.write(game.to_yaml) }
+    puts 'Game saved.. Press Enter'
+    gets
+  end
 end

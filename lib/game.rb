@@ -6,6 +6,7 @@ require_relative 'file_handler.rb'
 class Game
   attr_reader :turns_left, :guessed_correctly, :dict_word
   def initialize
+    @saver = SaveFileHandler.new
     @dictionary = DictionaryHandler.new('5desk.txt')
     @dict_word = @dictionary.guess_word
     @turns_left = 8
@@ -30,7 +31,12 @@ class Game
   def acquire_guess
     loop do
       print 'Your guess? '
-      @guess = gets.chomp.downcase
+      # https://stackoverflow.com/questions/946738/detect-key-press-non-blocking-w-o-getc-gets-in-ruby/22659929
+      system('stty raw -echo') #=> Raw mode, no echo
+      @guess = STDIN.getc
+      system('stty -raw echo') #=> Reset terminal mode
+      # @guess = gets.chomp.downcase
+      @saver.save_game(self) if @guess == "\`"
       next unless @guess =~ /[a-z]/
 
       next if @used_letters.include? @guess
